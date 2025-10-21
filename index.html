@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline';">
+    <title>高安全性加解密工具 | AES-GCM-256</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft JhengHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header .subtitle {
+            font-size: 0.95em;
+            opacity: 0.9;
+        }
+
+        .security-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            margin-top: 10px;
+            font-size: 0.85em;
+        }
+
+        .main-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+            margin-bottom: 20px;
+        }
+
+        /* 模式切換 Tab */
+        .mode-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .mode-tab {
+            flex: 1;
+            padding: 15px;
+            background: none;
+            border: none;
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #999;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+            position: relative;
+            bottom: -2px;
+        }
+
+        .mode-tab:hover {
+            color: #667eea;
+        }
+
+        .mode-tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .mode-tab .icon {
+            font-size: 1.2em;
+            margin-right: 8px;
+        }
+
+        /* 表單區域 */
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #555;
+            font-size: 0.95em;
+        }
+
+        textarea, input[type="password"], input[type="text"] {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            font-family: 'Courier New', monospace;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+            line-height: 1.5;
+        }
+
+        textarea:focus, input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .password-wrapper {
+            position: relative;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            font-size: 0.9em;
+            padding: 5px 10px;
+            font-weight: 500;
+        }
+
+        .toggle-password:hover {
+            color: #764ba2;
+        }
+
+        .password-strength {
+            margin-top: 8px;
+            height: 4px;
+            background: #e0e0e0;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .password-strength-bar {
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s, background-color 0.3s;
+        }
+
+        .strength-weak { background-color: #f44336; width: 33%; }
+        .strength-medium { background-color: #ff9800; width: 66%; }
+        .strength-strong { background-color: #4caf50; width: 100%; }
+
+        .password-hint {
+            font-size: 0.85em;
+            color: #888;
+            margin-top: 6px;
+        }
+
+        /* 按鈕 */
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        button {
+            padding: 14px 28px;
+            font-size: 1em;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            flex: 1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #666;
+            min-width: 100px;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-success {
+            background: #4caf50;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(76, 175, 80, 0.4);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        button:active:not(:disabled) {
+            transform: translateY(0px);
+        }
+
+        /* 輸出區域 */
+        .output-section {
+            margin-top: 30px;
+        }
+
+        .output-area {
+            background: #f9f9f9;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 18px;
+            min-height: 100px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+            word-break: break-all;
+            white-space: pre-wrap;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .output-area.empty {
+            color: #999;
+            font-style: italic;
+        }
+
+        .output-area.success {
+            background: #e8f5e9;
+            border-color: #4caf50;
+            color: #2e7d32;
+        }
+
+        .output-area.error {
+            background: #ffebee;
+            border-color: #f44336;
+            color: #c62828;
+        }
+
+        /* Loading 動畫 */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 30px 20px;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: #667eea;
+            font-weight: 500;
+        }
+
+        /* 資訊框 */
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 18px;
+            border-radius: 5px;
+            margin-top: 30px;
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+
+        .info-box strong {
+            display: block;
+            margin-bottom: 8px;
+            color: #1976d2;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 30px;
+            font-size: 0.85em;
+            opacity: 0.85;
+            line-height: 1.6;
+        }
+
+        /* 響應式設計 */
+        @media (max-width: 768px) {
+            .main-card {
+                padding: 25px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .header .subtitle {
+                font-size: 0.85em;
+            }
+
+            .mode-tab {
+                font-size: 1em;
+                padding: 12px;
+            }
+
+            textarea {
+                min-height: 120px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔐 高安全性加解密工具</h1>
+            <div class="subtitle">AES-GCM-256 + PBKDF2-SHA512 (600k iterations) + HKDF</div>
+            <div class="security-badge">✓ 零外部依賴 | ✓ 完全離線 | ✓ 客戶端加密</div>
+        </div>
+
+        <div class="main-card">
+            <!-- 模式切換 Tab -->
+            <div class="mode-tabs">
+                <button class="mode-tab active" onclick="switchMode('encrypt')" id="encrypt-tab">
+                    <span class="icon">🔒</span>加密
+                </button>
+                <button class="mode-tab" onclick="switchMode('decrypt')" id="decrypt-tab">
+                    <span class="icon">🔓</span>解密
+                </button>
+            </div>
+
+            <!-- 輸入內容區 -->
+            <div class="form-group">
+                <label for="content-input" id="content-label">輸入內容</label>
+                <textarea id="content-input" placeholder="請輸入要加密的內容..."></textarea>
+            </div>
+
+            <!-- 密碼輸入區 -->
+            <div class="form-group">
+                <label for="password-input">密碼</label>
+                <div class="password-wrapper">
+                    <input type="password" id="password-input" placeholder="輸入強密碼（建議16字元以上）">
+                    <button type="button" class="toggle-password" onclick="togglePassword()">顯示</button>
+                </div>
+                <div class="password-strength">
+                    <div id="password-strength-bar" class="password-strength-bar"></div>
+                </div>
+                <div class="password-hint" id="password-hint">建議：至少12字元，包含大小寫、數字、特殊符號</div>
+            </div>
+
+            <!-- 操作按鈕 -->
+            <div class="button-group">
+                <button class="btn-primary" onclick="processAction()" id="action-button">
+                    🔒 加密
+                </button>
+                <button class="btn-secondary" onclick="clearAll()">清除</button>
+            </div>
+
+            <!-- Loading 動畫 -->
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <div class="loading-text" id="loading-text">處理中，請稍候...</div>
+            </div>
+
+            <!-- 結果輸出區 -->
+            <div class="output-section" id="output-section" style="display: none;">
+                <div class="form-group">
+                    <label id="output-label">結果</label>
+                    <div id="output" class="output-area empty">結果將顯示在這裡...</div>
+                    <div class="button-group" style="margin-top: 12px;">
+                        <button class="btn-success" onclick="copyToClipboard()">📋 複製結果</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 資訊說明 -->
+            <div class="info-box">
+                <strong>⚠️ 安全提示</strong>
+                • 所有加密處理完全在您的瀏覽器本地完成，不會上傳到任何伺服器<br>
+                • 請妥善保管您的密碼，遺失密碼將無法復原資料<br>
+                • 此工具使用 AES-GCM-256 位元加密，PBKDF2-SHA512 (600,000 次迭代) 金鑰衍生<br>
+                • 建議使用強密碼以獲得最佳安全性
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>100% 原生 JavaScript 實作 | 零外部依賴 | 開源可審計</p>
+            <p>Version 1.0 | AES-GCM-256 | PBKDF2-SHA512 | HKDF-SHA256</p>
+        </div>
+    </div>
+
+    <script>
+        'use strict';
+
+        // ============================================
+        // 常數定義
+        // ============================================
+        const CONFIG = {
+            VERSION: 0x01,
+            SALT_SIZE: 32,
+            IV_SIZE: 12,
+            PBKDF2_ITERATIONS: 600000,
+            AES_KEY_SIZE: 256,
+            HASH_ALGORITHM: 'SHA-512',
+            HKDF_HASH: 'SHA-256'
+        };
+
+        // 當前模式（encrypt 或 decrypt）
+        let currentMode = 'encrypt';
+
+        // ============================================
+        // Base64 編碼/解碼 (處理 Unicode)
+        // ============================================
+        function arrayBufferToBase64(buffer) {
+            const bytes = new Uint8Array(buffer);
+            let binary = '';
+            for (let i = 0; i < bytes.length; i++) {
+                binary += String.fromCharCode(bytes[i]);
+            }
+            return btoa(binary);
+        }
+
+        function base64ToArrayBuffer(base64) {
+            const binary = atob(base64);
+            const bytes = new Uint8Array(binary.length);
+            for (let i = 0; i < binary.length; i++) {
+                bytes[i] = binary.charCodeAt(i);
+            }
+            return bytes.buffer;
+        }
+
+        // ============================================
+        // HKDF-SHA256 實作
+        // ============================================
+        async function hkdf(ikm, length, salt = null, info = '') {
+            // HKDF-Extract
+            const saltKey = await crypto.subtle.importKey(
+                'raw',
+                salt || new Uint8Array(32),
+                { name: 'HMAC', hash: CONFIG.HKDF_HASH },
+                false,
+                ['sign']
+            );
+
+            const prk = await crypto.subtle.sign('HMAC', saltKey, ikm);
+
+            // HKDF-Expand
+            const prkKey = await crypto.subtle.importKey(
+                'raw',
+                prk,
+                { name: 'HMAC', hash: CONFIG.HKDF_HASH },
+                false,
+                ['sign']
+            );
+
+            const infoBytes = new TextEncoder().encode(info);
+            const hashLen = 32; // SHA-256 輸出 32 bytes
+            const n = Math.ceil(length / hashLen);
+
+            let t = new Uint8Array(0);
+            let okm = new Uint8Array(0);
+
+            for (let i = 0; i < n; i++) {
+                const data = new Uint8Array(t.length + infoBytes.length + 1);
+                data.set(t);
+                data.set(infoBytes, t.length);
+                data[data.length - 1] = i + 1;
+
+                t = new Uint8Array(await crypto.subtle.sign('HMAC', prkKey, data));
+
+                const newOkm = new Uint8Array(okm.length + t.length);
+                newOkm.set(okm);
+                newOkm.set(t, okm.length);
+                okm = newOkm;
+            }
+
+            return okm.slice(0, length);
+        }
+
+        // ============================================
+        // UI 控制函數
+        // ============================================
+        function switchMode(mode) {
+            currentMode = mode;
+
+            const encryptTab = document.getElementById('encrypt-tab');
+            const decryptTab = document.getElementById('decrypt-tab');
+            const contentLabel = document.getElementById('content-label');
+            const contentInput = document.getElementById('content-input');
+            const passwordHint = document.getElementById('password-hint');
+            const actionButton = document.getElementById('action-button');
+
+            if (mode === 'encrypt') {
+                encryptTab.classList.add('active');
+                decryptTab.classList.remove('active');
+                contentLabel.textContent = '輸入內容';
+                contentInput.placeholder = '請輸入要加密的內容...';
+                passwordHint.textContent = '建議：至少12字元，包含大小寫、數字、特殊符號';
+                actionButton.innerHTML = '🔒 加密';
+            } else {
+                encryptTab.classList.remove('active');
+                decryptTab.classList.add('active');
+                contentLabel.textContent = '密文內容';
+                contentInput.placeholder = '請貼上要解密的密文...';
+                passwordHint.textContent = '請輸入加密時使用的密碼';
+                actionButton.innerHTML = '🔓 解密';
+            }
+
+            // 清除輸出
+            hideOutput();
+        }
+
+        function hideOutput() {
+            const outputSection = document.getElementById('output-section');
+            outputSection.style.display = 'none';
+        }
+
+        function showOutput(content, type = 'success') {
+            const outputSection = document.getElementById('output-section');
+            const outputDiv = document.getElementById('output');
+            const outputLabel = document.getElementById('output-label');
+
+            outputSection.style.display = 'block';
+
+            if (type === 'success') {
+                outputDiv.textContent = content;
+                outputDiv.className = 'output-area success';
+                outputLabel.textContent = currentMode === 'encrypt' ? '加密結果' : '解密結果';
+            } else {
+                outputDiv.textContent = '❌ ' + content;
+                outputDiv.className = 'output-area error';
+                outputLabel.textContent = '錯誤';
+            }
+
+            // 平滑滾動到結果
+            setTimeout(() => {
+                outputSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 100);
+        }
+
+        // ============================================
+        // 密碼強度檢測
+        // ============================================
+        function checkPasswordStrength(password) {
+            const strengthBar = document.getElementById('password-strength-bar');
+
+            if (!password || currentMode === 'decrypt') {
+                strengthBar.className = 'password-strength-bar';
+                return;
+            }
+
+            let strength = 0;
+
+            // 長度檢查
+            if (password.length >= 8) strength++;
+            if (password.length >= 12) strength++;
+            if (password.length >= 16) strength++;
+
+            // 複雜度檢查
+            if (/[a-z]/.test(password)) strength++;
+            if (/[A-Z]/.test(password)) strength++;
+            if (/[0-9]/.test(password)) strength++;
+            if (/[^a-zA-Z0-9]/.test(password)) strength++;
+
+            // 設定強度顯示
+            strengthBar.className = 'password-strength-bar';
+            if (strength <= 3) {
+                strengthBar.classList.add('strength-weak');
+            } else if (strength <= 5) {
+                strengthBar.classList.add('strength-medium');
+            } else {
+                strengthBar.classList.add('strength-strong');
+            }
+        }
+
+        // ============================================
+        // 密碼顯示/隱藏切換
+        // ============================================
+        function togglePassword() {
+            const input = document.getElementById('password-input');
+            const button = input.nextElementSibling;
+
+            if (input.type === 'password') {
+                input.type = 'text';
+                button.textContent = '隱藏';
+            } else {
+                input.type = 'password';
+                button.textContent = '顯示';
+            }
+        }
+
+        // ============================================
+        // 主要處理函數（根據模式執行加密或解密）
+        // ============================================
+        async function processAction() {
+            if (currentMode === 'encrypt') {
+                await encryptData();
+            } else {
+                await decryptData();
+            }
+        }
+
+        // ============================================
+        // 核心加密函數
+        // ============================================
+        async function encryptData() {
+            const content = document.getElementById('content-input').value;
+            const password = document.getElementById('password-input').value;
+            const loading = document.getElementById('loading');
+            const loadingText = document.getElementById('loading-text');
+
+            // 驗證輸入
+            if (!content) {
+                showOutput('請輸入要加密的內容', 'error');
+                return;
+            }
+
+            if (!password) {
+                showOutput('請輸入密碼', 'error');
+                return;
+            }
+
+            if (password.length < 8) {
+                showOutput('密碼長度至少需要 8 個字元，建議使用 16 字元以上的強密碼', 'error');
+                return;
+            }
+
+            try {
+                loading.classList.add('active');
+                loadingText.textContent = '加密處理中，請稍候...';
+                hideOutput();
+
+                // 延遲執行以顯示 loading 動畫
+                await new Promise(resolve => setTimeout(resolve, 100));
+
+                // 1. 生成隨機 Salt 和 IV
+                const salt = crypto.getRandomValues(new Uint8Array(CONFIG.SALT_SIZE));
+                const iv = crypto.getRandomValues(new Uint8Array(CONFIG.IV_SIZE));
+
+                // 2. 使用 PBKDF2-SHA512 從密碼衍生中間金鑰
+                const passwordBytes = new TextEncoder().encode(password);
+                const passwordKey = await crypto.subtle.importKey(
+                    'raw',
+                    passwordBytes,
+                    'PBKDF2',
+                    false,
+                    ['deriveBits']
+                );
+
+                const intermediateKeyBits = await crypto.subtle.deriveBits(
+                    {
+                        name: 'PBKDF2',
+                        salt: salt,
+                        iterations: CONFIG.PBKDF2_ITERATIONS,
+                        hash: CONFIG.HASH_ALGORITHM
+                    },
+                    passwordKey,
+                    256
+                );
+
+                // 3. 使用 HKDF 衍生最終 AES 金鑰
+                const finalKeyBytes = await hkdf(
+                    new Uint8Array(intermediateKeyBits),
+                    32,
+                    salt,
+                    'AES-GCM-256-Encryption-Key'
+                );
+
+                const aesKey = await crypto.subtle.importKey(
+                    'raw',
+                    finalKeyBytes,
+                    { name: 'AES-GCM' },
+                    false,
+                    ['encrypt']
+                );
+
+                // 4. 加密明文
+                const plaintextBytes = new TextEncoder().encode(content);
+                const ciphertext = await crypto.subtle.encrypt(
+                    {
+                        name: 'AES-GCM',
+                        iv: iv,
+                        tagLength: 128
+                    },
+                    aesKey,
+                    plaintextBytes
+                );
+
+                // 5. 組合輸出: version(1) + salt(32) + iv(12) + ciphertext
+                const output = new Uint8Array(1 + CONFIG.SALT_SIZE + CONFIG.IV_SIZE + ciphertext.byteLength);
+                output[0] = CONFIG.VERSION;
+                output.set(salt, 1);
+                output.set(iv, 1 + CONFIG.SALT_SIZE);
+                output.set(new Uint8Array(ciphertext), 1 + CONFIG.SALT_SIZE + CONFIG.IV_SIZE);
+
+                // 6. 轉換為 Base64
+                const base64Output = arrayBufferToBase64(output);
+
+                showOutput(base64Output, 'success');
+
+            } catch (error) {
+                console.error('加密錯誤:', error);
+                showOutput('加密過程發生錯誤，請檢查您的輸入', 'error');
+            } finally {
+                loading.classList.remove('active');
+            }
+        }
+
+        // ============================================
+        // 核心解密函數
+        // ============================================
+        async function decryptData() {
+            const content = document.getElementById('content-input').value.trim();
+            const password = document.getElementById('password-input').value;
+            const loading = document.getElementById('loading');
+            const loadingText = document.getElementById('loading-text');
+
+            // 驗證輸入
+            if (!content) {
+                showOutput('請輸入要解密的密文', 'error');
+                return;
+            }
+
+            if (!password) {
+                showOutput('請輸入密碼', 'error');
+                return;
+            }
+
+            try {
+                loading.classList.add('active');
+                loadingText.textContent = '解密處理中，請稍候...';
+                hideOutput();
+
+                // 延遲執行以顯示 loading 動畫
+                await new Promise(resolve => setTimeout(resolve, 100));
+
+                // 1. 解析 Base64
+                let encryptedData;
+                try {
+                    encryptedData = new Uint8Array(base64ToArrayBuffer(content));
+                } catch (e) {
+                    throw new Error('無效的密文格式');
+                }
+
+                // 2. 檢查版本和最小長度
+                const minLength = 1 + CONFIG.SALT_SIZE + CONFIG.IV_SIZE + 16; // 16 = 最小 GCM tag
+                if (encryptedData.length < minLength) {
+                    throw new Error('密文長度不正確');
+                }
+
+                const version = encryptedData[0];
+                if (version !== CONFIG.VERSION) {
+                    throw new Error('不支援的加密版本');
+                }
+
+                // 3. 提取 Salt, IV, Ciphertext
+                const salt = encryptedData.slice(1, 1 + CONFIG.SALT_SIZE);
+                const iv = encryptedData.slice(1 + CONFIG.SALT_SIZE, 1 + CONFIG.SALT_SIZE + CONFIG.IV_SIZE);
+                const ciphertextBytes = encryptedData.slice(1 + CONFIG.SALT_SIZE + CONFIG.IV_SIZE);
+
+                // 4. 使用相同參數從密碼衍生中間金鑰
+                const passwordBytes = new TextEncoder().encode(password);
+                const passwordKey = await crypto.subtle.importKey(
+                    'raw',
+                    passwordBytes,
+                    'PBKDF2',
+                    false,
+                    ['deriveBits']
+                );
+
+                const intermediateKeyBits = await crypto.subtle.deriveBits(
+                    {
+                        name: 'PBKDF2',
+                        salt: salt,
+                        iterations: CONFIG.PBKDF2_ITERATIONS,
+                        hash: CONFIG.HASH_ALGORITHM
+                    },
+                    passwordKey,
+                    256
+                );
+
+                // 5. 使用 HKDF 衍生最終 AES 金鑰
+                const finalKeyBytes = await hkdf(
+                    new Uint8Array(intermediateKeyBits),
+                    32,
+                    salt,
+                    'AES-GCM-256-Encryption-Key'
+                );
+
+                const aesKey = await crypto.subtle.importKey(
+                    'raw',
+                    finalKeyBytes,
+                    { name: 'AES-GCM' },
+                    false,
+                    ['decrypt']
+                );
+
+                // 6. 解密
+                const decryptedBytes = await crypto.subtle.decrypt(
+                    {
+                        name: 'AES-GCM',
+                        iv: iv,
+                        tagLength: 128
+                    },
+                    aesKey,
+                    ciphertextBytes
+                );
+
+                // 7. 轉換為文字
+                const plaintext = new TextDecoder().decode(decryptedBytes);
+
+                showOutput(plaintext, 'success');
+
+            } catch (error) {
+                console.error('解密錯誤:', error);
+
+                // 不透露具體錯誤細節，提升安全性
+                if (error.name === 'OperationError' || error.message.includes('decrypt')) {
+                    showOutput('解密失敗：密碼錯誤或密文已損壞', 'error');
+                } else {
+                    showOutput('解密失敗：' + error.message, 'error');
+                }
+            } finally {
+                loading.classList.remove('active');
+            }
+        }
+
+        // ============================================
+        // UI 輔助函數
+        // ============================================
+        function clearAll() {
+            document.getElementById('content-input').value = '';
+            document.getElementById('password-input').value = '';
+            document.getElementById('password-strength-bar').className = 'password-strength-bar';
+            hideOutput();
+        }
+
+        async function copyToClipboard() {
+            const output = document.getElementById('output');
+            const text = output.textContent;
+
+            if (!text || text.includes('將顯示在這裡') || text.includes('處理中') || text.startsWith('❌')) {
+                alert('沒有可複製的內容');
+                return;
+            }
+
+            try {
+                await navigator.clipboard.writeText(text);
+
+                // 顯示複製成功提示
+                const button = event.target;
+                const originalText = button.textContent;
+                button.textContent = '✓ 已複製';
+                button.style.background = '#45a049';
+
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.style.background = '';
+                }, 2000);
+            } catch (err) {
+                // Fallback 方法
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                textarea.style.position = 'fixed';
+                textarea.style.opacity = '0';
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                alert('已複製到剪貼簿');
+            }
+        }
+
+        // ============================================
+        // 事件監聽器
+        // ============================================
+        document.getElementById('password-input').addEventListener('input', function(e) {
+            checkPasswordStrength(e.target.value);
+        });
+
+        // 按 Enter 鍵觸發處理
+        document.getElementById('password-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                processAction();
+            }
+        });
+
+        document.getElementById('content-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && e.ctrlKey) {
+                processAction();
+            }
+        });
+
+        // ============================================
+        // 初始化
+        // ============================================
+        console.log('🔐 高安全性加解密工具已載入');
+        console.log('版本:', CONFIG.VERSION);
+        console.log('加密演算法: AES-GCM-256');
+        console.log('金鑰衍生: PBKDF2-SHA512 (' + CONFIG.PBKDF2_ITERATIONS.toLocaleString() + ' iterations) + HKDF-SHA256');
+        console.log('零外部依賴 | 完全離線可用 | 客戶端加密');
+    </script>
+</body>
+</html>
