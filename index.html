@@ -377,6 +377,36 @@
                 width: 100%;
             }
         }
+		
+		/* Footer 基礎樣式微調 */
+		.footer {
+			text-align: center;
+			color: white;
+			margin-top: 30px;
+			font-size: 0.85em;
+			opacity: 0.85;
+			line-height: 1.8;
+		}
+
+		/* 新增：Powered by 連結樣式 */
+		.powered-by {
+			margin-top: 15px;
+			font-weight: 500;
+		}
+
+		.powered-by a {
+			color: #fff;
+			text-decoration: none;
+			border-bottom: 1px solid rgba(255,255,255,0.4);
+			padding-bottom: 2px;
+			transition: all 0.3s ease;
+		}
+
+		.powered-by a:hover {
+			opacity: 1;
+			border-bottom-color: #fff;
+			text-shadow: 0 0 8px rgba(255,255,255,0.5);
+		}
     </style>
 </head>
 <body>
@@ -453,9 +483,10 @@
         </div>
 
         <div class="footer">
-            <p>100% 原生 JavaScript 實作 | 零外部依賴 | 開源可審計</p>
-            <p>Version 1.0 | AES-GCM-256 | PBKDF2-SHA512 | HKDF-SHA256</p>
-        </div>
+			<p>100% 原生 JavaScript 實作 | 零外部依賴 | 開源可審計</p>
+			<p>Version 1.0 | AES-GCM-256 | PBKDF2-SHA512 | HKDF-SHA256</p>
+			<p class="powered-by">Powered by <a href="https://github.com/mike-hsieh-tw/aes-vault/" target="_blank">mike.hsieh</a></p>
+		</div>
     </div>
 
     <script>
