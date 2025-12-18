@@ -429,6 +429,26 @@
 			line-height: 1.8;
 		}
 
+		/* 新增：Disclaimer 樣式 */
+		.footer .disclaimer {
+			font-size: 0.8em;
+			opacity: 0.75;
+			margin-top: 12px;
+			padding-top: 10px;
+			border-top: 1px solid rgba(255,255,255,0.2);
+		}
+
+		.footer .disclaimer a {
+			color: #fff;
+			text-decoration: underline;
+			opacity: 0.9;
+		}
+
+		.footer .disclaimer a:hover {
+			opacity: 1;
+			text-decoration: none;
+		}
+
 		/* 新增：Powered by 連結樣式 */
 		.powered-by {
 			margin-top: 15px;
@@ -534,6 +554,10 @@
         <div class="footer">
 			<p data-i18n="footerLine1">100% 原生 JavaScript 實作 | 零外部依賴 | 開源可審計</p>
 			<p>Version 1.0 | AES-GCM-256 | PBKDF2-SHA512 | HKDF-SHA256</p>
+			<p class="disclaimer" data-i18n-html="footerDisclaimer">
+				⚠️ 本軟體以「現狀」提供，不提供任何明示或暗示的保證。使用者須自行承擔風險。<br>
+				<a href="https://github.com/mike-hsieh-tw/aes-vault/blob/master/LICENSE" target="_blank" rel="noopener">MIT License</a> | 
+			</p>
 			<p class="powered-by">Powered by <a href="https://github.com/mike-hsieh-tw/aes-vault/" target="_blank">mike.hsieh</a></p>
 		</div>
     </div>
@@ -575,6 +599,7 @@
                 infoTitle: '⚠️ 安全提示',
                 infoContent: '• 所有加密處理完全在您的瀏覽器本地完成，不會上傳到任何伺服器<br>• 請妥善保管您的密碼，遺失密碼將無法復原資料<br>• 此工具使用 AES-GCM-256 位元加密，PBKDF2-SHA512 (600,000 次迭代) 金鑰衍生<br>• 建議使用強密碼以獲得最佳安全性',
                 footerLine1: '100% 原生 JavaScript 實作 | 零外部依賴 | 開源可審計',
+                footerDisclaimer: '⚠️ 本軟體以「現狀」提供，不提供任何明示或暗示的保證。使用者須自行承擔風險。<br><a href="https://github.com/mike-hsieh-tw/aes-vault/blob/master/LICENSE" target="_blank" rel="noopener">MIT License</a>',
                 // 錯誤訊息
                 errorNoContent: '請輸入要加密的內容',
                 errorNoCiphertext: '請輸入要解密的密文',
@@ -618,6 +643,7 @@
                 infoTitle: '⚠️ Security Notice',
                 infoContent: '• All encryption is performed locally in your browser and never sent to any server<br>• Please keep your password safe - lost passwords cannot recover data<br>• Uses AES-GCM-256 encryption with PBKDF2-SHA512 (600,000 iterations) key derivation<br>• Strong passwords are recommended for best security',
                 footerLine1: '100% Native JavaScript | Zero Dependencies | Open Source',
+                footerDisclaimer: '⚠️ This software is provided "AS IS" without warranty of any kind. Use at your own risk.<br><a href="https://github.com/mike-hsieh-tw/aes-vault/blob/master/LICENSE" target="_blank" rel="noopener">MIT License</a>',
                 // Error messages
                 errorNoContent: 'Please enter content to encrypt',
                 errorNoCiphertext: 'Please enter ciphertext to decrypt',

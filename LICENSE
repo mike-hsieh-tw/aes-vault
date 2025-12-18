@@ -1,0 +1,62 @@
+MIT License
+
+Copyright (c) 2025 mike-hsieh-tw
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+DISCLAIMER OF LIABILITY / 免責聲明
+
+This software is provided for educational and informational purposes only.
+The author(s) make no guarantees regarding the security, reliability, or 
+suitability of this software for any particular purpose.
+
+Users are solely responsible for:
+- The security and confidentiality of their passwords
+- Any data encrypted or decrypted using this software
+- Compliance with applicable laws and regulations in their jurisdiction
+
+The author(s) shall not be held liable for:
+- Any loss of data, passwords, or encrypted content
+- Any damages resulting from the use or misuse of this software
+- Any security vulnerabilities or cryptographic weaknesses
+- Any consequences of using this software in production environments
+
+NO MAINTENANCE OBLIGATION:
+This project is provided "as-is" with no obligation for ongoing maintenance,
+updates, or support. The author may update the software at their discretion
+but is under no obligation to do so.
+
+本軟體僅供教育與資訊用途。作者不對本軟體的安全性、可靠性或適用性提供任何保證。
+
+使用者須自行承擔：
+- 密碼的安全性與保密性
+- 使用本軟體加密或解密的任何資料
+- 遵守其所在地區的相關法律法規
+
+作者不對以下情況承擔責任：
+- 任何資料、密碼或加密內容的遺失
+- 因使用或誤用本軟體造成的任何損害
+- 任何安全漏洞或加密演算法的弱點
+- 在生產環境中使用本軟體的任何後果
+
+無維護義務：
+本專案以「現狀」提供，作者無義務進行持續維護、更新或提供支援。
+作者可自行決定是否更新軟體，但無此義務。
