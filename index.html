@@ -65,6 +65,43 @@
             font-size: 0.85em;
         }
 
+        /* 語言切換按鈕 */
+        .lang-switcher {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 8px;
+            background: rgba(255,255,255,0.25);
+            padding: 8px 12px;
+            border-radius: 25px;
+            backdrop-filter: blur(10px);
+        }
+
+        .lang-btn {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 500;
+            padding: 5px 10px;
+            border-radius: 15px;
+            transition: all 0.3s;
+            opacity: 0.7;
+        }
+
+        .lang-btn:hover {
+            opacity: 1;
+            background: rgba(255,255,255,0.2);
+        }
+
+        .lang-btn.active {
+            opacity: 1;
+            background: rgba(255,255,255,0.35);
+            font-weight: 600;
+        }
+
         .main-card {
             background: white;
             border-radius: 15px;
@@ -410,80 +447,88 @@
     </style>
 </head>
 <body>
+    <!-- 語言切換按鈕 -->
+    <div class="lang-switcher">
+        <button class="lang-btn active" onclick="switchLanguage('zh-TW')" id="lang-zh">繁中</button>
+        <button class="lang-btn" onclick="switchLanguage('en')" id="lang-en">EN</button>
+    </div>
+
     <div class="container">
         <div class="header">
-            <h1>🔐 高安全性加解密工具</h1>
-            <div class="subtitle">AES-GCM-256 + PBKDF2-SHA512 (600k iterations) + HKDF</div>
-            <div class="security-badge">✓ 零外部依賴 | ✓ 完全離線 | ✓ 客戶端加密</div>
+            <h1 data-i18n="title">🔐 高安全性加解密工具</h1>
+            <div class="subtitle" data-i18n="subtitle">AES-GCM-256 + PBKDF2-SHA512 (600k iterations) + HKDF</div>
+            <div class="security-badge" data-i18n="securityBadge">✓ 零外部依賴 | ✓ 完全離線 | ✓ 客戶端加密</div>
         </div>
 
         <div class="main-card">
             <!-- 模式切換 Tab -->
             <div class="mode-tabs">
                 <button class="mode-tab active" onclick="switchMode('encrypt')" id="encrypt-tab">
-                    <span class="icon">🔒</span>加密
+                    <span class="icon">🔒</span><span data-i18n="encryptTab">加密</span>
                 </button>
                 <button class="mode-tab" onclick="switchMode('decrypt')" id="decrypt-tab">
-                    <span class="icon">🔓</span>解密
+                    <span class="icon">🔓</span><span data-i18n="decryptTab">解密</span>
                 </button>
             </div>
 
             <!-- 輸入內容區 -->
             <div class="form-group">
-                <label for="content-input" id="content-label">輸入內容</label>
-                <textarea id="content-input" placeholder="請輸入要加密的內容..."></textarea>
+                <label for="content-input" id="content-label" data-i18n="contentLabel">輸入內容</label>
+                <textarea id="content-input" data-i18n-placeholder="contentPlaceholder" placeholder="請輸入要加密的內容..."></textarea>
             </div>
 
             <!-- 密碼輸入區 -->
             <div class="form-group">
-                <label for="password-input">密碼</label>
+                <label for="password-input" data-i18n="passwordLabel">密碼</label>
                 <div class="password-wrapper">
-                    <input type="password" id="password-input" placeholder="輸入強密碼（建議16字元以上）">
-                    <button type="button" class="toggle-password" onclick="togglePassword()">顯示</button>
+                    <input type="password" id="password-input" data-i18n-placeholder="passwordPlaceholder" placeholder="輸入強密碼（建議16字元以上）">
+                    <button type="button" class="toggle-password" onclick="togglePassword()" id="toggle-password-btn" data-i18n="togglePasswordShow">顯示</button>
                 </div>
                 <div class="password-strength">
                     <div id="password-strength-bar" class="password-strength-bar"></div>
                 </div>
-                <div class="password-hint" id="password-hint">建議：至少12字元，包含大小寫、數字、特殊符號</div>
+                <div class="password-hint" id="password-hint" data-i18n="passwordHint">建議：至少12字元，包含大小寫、數字、特殊符號</div>
             </div>
 
             <!-- 操作按鈕 -->
             <div class="button-group">
-                <button class="btn-primary" onclick="processAction()" id="action-button">
+                <button class="btn-primary" onclick="processAction()" id="action-button" data-i18n="actionButtonEncrypt">
                     🔒 加密
                 </button>
-                <button class="btn-secondary" onclick="clearAll()">清除</button>
+                <button class="btn-secondary" onclick="clearAll()" data-i18n="clearButton">清除</button>
             </div>
 
             <!-- Loading 動畫 -->
             <div class="loading" id="loading">
                 <div class="spinner"></div>
-                <div class="loading-text" id="loading-text">處理中，請稍候...</div>
+                <div class="loading-text" id="loading-text" data-i18n="loadingText">處理中，請稍候...</div>
             </div>
 
             <!-- 結果輸出區 -->
             <div class="output-section" id="output-section" style="display: none;">
                 <div class="form-group">
-                    <label id="output-label">結果</label>
-                    <div id="output" class="output-area empty">結果將顯示在這裡...</div>
+                    <label id="output-label" data-i18n="outputLabel">結果</label>
+                    <div id="output" class="output-area empty" data-i18n="outputEmpty">結果將顯示在這裡...</div>
                     <div class="button-group" style="margin-top: 12px;">
-                        <button class="btn-success" onclick="copyToClipboard()">📋 複製結果</button>
+                        <button class="btn-success" onclick="copyToClipboard()" data-i18n="copyButton">📋 複製結果</button>
                     </div>
                 </div>
             </div>
 
             <!-- 資訊說明 -->
             <div class="info-box">
-                <strong>⚠️ 安全提示</strong>
-                • 所有加密處理完全在您的瀏覽器本地完成，不會上傳到任何伺服器<br>
-                • 請妥善保管您的密碼，遺失密碼將無法復原資料<br>
-                • 此工具使用 AES-GCM-256 位元加密，PBKDF2-SHA512 (600,000 次迭代) 金鑰衍生<br>
-                • 建議使用強密碼以獲得最佳安全性
+                <strong data-i18n="infoTitle">⚠️ 安全提示</strong>
+                <div data-i18n-html="infoContent">
+                    • 所有加密處理完全在您的瀏覽器本地完成，不會上傳到任何伺服器<br>
+                    • 請妥善保管您的密碼，遺失密碼將無法復原資料<br>
+                    • 此工具使用 AES-GCM-256 位元加密，PBKDF2-SHA512 (600,000 次迭代) 金鑰衍生<br>
+                    • 建議使用強密碼以獲得最佳安全性
+                </div>
             </div>
         </div>
 
         <div class="footer">
-			<p>100% 原生 JavaScript 實作 | 零外部依賴 | 開源可審計</p>
+			<p data-i18n="footerLine1">100% 原生 JavaScript 實作 | 零外部依賴 | 開源可審計</p>
 			<p>Version 1.0 | AES-GCM-256 | PBKDF2-SHA512 | HKDF-SHA256</p>
 			<p class="powered-by">Powered by <a href="https://github.com/mike-hsieh-tw/aes-vault/" target="_blank">mike.hsieh</a></p>
 		</div>
@@ -491,6 +536,165 @@
 
     <script>
         'use strict';
+
+        // ============================================
+        // 多語言翻譯對象
+        // ============================================
+        const translations = {
+            'zh-TW': {
+                title: '🔐 高安全性加解密工具',
+                subtitle: 'AES-GCM-256 + PBKDF2-SHA512 (600k iterations) + HKDF',
+                securityBadge: '✓ 零外部依賴 | ✓ 完全離線 | ✓ 客戶端加密',
+                encryptTab: '加密',
+                decryptTab: '解密',
+                contentLabel: '輸入內容',
+                contentPlaceholder: '請輸入要加密的內容...',
+                contentPlaceholderDecrypt: '請貼上要解密的密文...',
+                passwordLabel: '密碼',
+                passwordPlaceholder: '輸入強密碼（建議16字元以上）',
+                togglePasswordShow: '顯示',
+                togglePasswordHide: '隱藏',
+                passwordHint: '建議：至少12字元，包含大小寫、數字、特殊符號',
+                passwordHintDecrypt: '請輸入加密時使用的密碼',
+                actionButtonEncrypt: '🔒 加密',
+                actionButtonDecrypt: '🔓 解密',
+                clearButton: '清除',
+                loadingText: '處理中，請稍候...',
+                loadingTextEncrypt: '加密處理中，請稍候...',
+                loadingTextDecrypt: '解密處理中，請稍候...',
+                outputLabel: '結果',
+                outputLabelEncrypt: '加密結果',
+                outputLabelDecrypt: '解密結果',
+                outputLabelError: '錯誤',
+                outputEmpty: '結果將顯示在這裡...',
+                copyButton: '📋 複製結果',
+                infoTitle: '⚠️ 安全提示',
+                infoContent: '• 所有加密處理完全在您的瀏覽器本地完成，不會上傳到任何伺服器<br>• 請妥善保管您的密碼，遺失密碼將無法復原資料<br>• 此工具使用 AES-GCM-256 位元加密，PBKDF2-SHA512 (600,000 次迭代) 金鑰衍生<br>• 建議使用強密碼以獲得最佳安全性',
+                footerLine1: '100% 原生 JavaScript 實作 | 零外部依賴 | 開源可審計',
+                // 錯誤訊息
+                errorNoContent: '請輸入要加密的內容',
+                errorNoCiphertext: '請輸入要解密的密文',
+                errorNoPassword: '請輸入密碼',
+                errorPasswordTooShort: '密碼長度至少需要 8 個字元，建議使用 16 字元以上的強密碼',
+                errorEncryptionFailed: '加密過程發生錯誤，請檢查您的輸入',
+                errorInvalidFormat: '無效的密文格式',
+                errorDecryptionFailed: '解密失敗：密碼錯誤或密文已損壞',
+                errorInvalidCiphertext: '密文格式錯誤或已損壞',
+                noCopyContent: '沒有可複製的內容',
+                copySuccess: '✓ 已複製',
+                copyFallback: '已複製到剪貼簿'
+            },
+            'en': {
+                title: '🔐 Secure Encryption Tool',
+                subtitle: 'AES-GCM-256 + PBKDF2-SHA512 (600k iterations) + HKDF',
+                securityBadge: '✓ Zero Dependencies | ✓ Fully Offline | ✓ Client-Side',
+                encryptTab: 'Encrypt',
+                decryptTab: 'Decrypt',
+                contentLabel: 'Content',
+                contentPlaceholder: 'Enter text to encrypt...',
+                contentPlaceholderDecrypt: 'Paste ciphertext to decrypt...',
+                passwordLabel: 'Password',
+                passwordPlaceholder: 'Enter strong password (16+ characters recommended)',
+                togglePasswordShow: 'Show',
+                togglePasswordHide: 'Hide',
+                passwordHint: 'Recommended: 12+ characters with uppercase, lowercase, numbers, symbols',
+                passwordHintDecrypt: 'Enter the password used for encryption',
+                actionButtonEncrypt: '🔒 Encrypt',
+                actionButtonDecrypt: '🔓 Decrypt',
+                clearButton: 'Clear',
+                loadingText: 'Processing...',
+                loadingTextEncrypt: 'Encrypting...',
+                loadingTextDecrypt: 'Decrypting...',
+                outputLabel: 'Result',
+                outputLabelEncrypt: 'Encrypted Result',
+                outputLabelDecrypt: 'Decrypted Result',
+                outputLabelError: 'Error',
+                outputEmpty: 'Result will be displayed here...',
+                copyButton: '📋 Copy Result',
+                infoTitle: '⚠️ Security Notice',
+                infoContent: '• All encryption is performed locally in your browser and never sent to any server<br>• Please keep your password safe - lost passwords cannot recover data<br>• Uses AES-GCM-256 encryption with PBKDF2-SHA512 (600,000 iterations) key derivation<br>• Strong passwords are recommended for best security',
+                footerLine1: '100% Native JavaScript | Zero Dependencies | Open Source',
+                // Error messages
+                errorNoContent: 'Please enter content to encrypt',
+                errorNoCiphertext: 'Please enter ciphertext to decrypt',
+                errorNoPassword: 'Please enter password',
+                errorPasswordTooShort: 'Password must be at least 8 characters (16+ recommended)',
+                errorEncryptionFailed: 'Encryption failed. Please check your input',
+                errorInvalidFormat: 'Invalid ciphertext format',
+                errorDecryptionFailed: 'Decryption failed: Wrong password or corrupted ciphertext',
+                errorInvalidCiphertext: 'Invalid or corrupted ciphertext format',
+                noCopyContent: 'No content to copy',
+                copySuccess: '✓ Copied',
+                copyFallback: 'Copied to clipboard'
+            }
+        };
+
+        // 當前語言（默認為繁體中文，或從 localStorage 讀取）
+        let currentLang = localStorage.getItem('aes-vault-lang') || 
+                          (navigator.language.startsWith('zh') ? 'zh-TW' : 'en');
+
+        // ============================================
+        // 語言切換函數
+        // ============================================
+        function switchLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('aes-vault-lang', lang);
+
+            // 更新 HTML lang 屬性
+            document.documentElement.lang = lang;
+
+            // 更新按鈕狀態
+            document.getElementById('lang-zh').classList.toggle('active', lang === 'zh-TW');
+            document.getElementById('lang-en').classList.toggle('active', lang === 'en');
+
+            // 更新所有翻譯文本
+            updateTranslations();
+        }
+
+        function updateTranslations() {
+            const t = translations[currentLang];
+
+            // 更新所有 data-i18n 元素
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (t[key]) {
+                    el.textContent = t[key];
+                }
+            });
+
+            // 更新所有 data-i18n-html 元素（支持 HTML）
+            document.querySelectorAll('[data-i18n-html]').forEach(el => {
+                const key = el.getAttribute('data-i18n-html');
+                if (t[key]) {
+                    el.innerHTML = t[key];
+                }
+            });
+
+            // 更新所有 placeholder
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-i18n-placeholder');
+                if (t[key]) {
+                    el.placeholder = t[key];
+                }
+            });
+
+            // 根據當前模式更新特定文本
+            updateModeSpecificTexts();
+        }
+
+        function updateModeSpecificTexts() {
+            const t = translations[currentLang];
+            const contentInput = document.getElementById('content-input');
+            const passwordHint = document.getElementById('password-hint');
+
+            if (currentMode === 'encrypt') {
+                contentInput.placeholder = t.contentPlaceholder;
+                passwordHint.textContent = t.passwordHint;
+            } else {
+                contentInput.placeholder = t.contentPlaceholderDecrypt;
+                passwordHint.textContent = t.passwordHintDecrypt;
+            }
+        }
 
         // ============================================
         // 常數定義
@@ -582,10 +786,10 @@
         // ============================================
         function switchMode(mode) {
             currentMode = mode;
+            const t = translations[currentLang];
 
             const encryptTab = document.getElementById('encrypt-tab');
             const decryptTab = document.getElementById('decrypt-tab');
-            const contentLabel = document.getElementById('content-label');
             const contentInput = document.getElementById('content-input');
             const passwordHint = document.getElementById('password-hint');
             const actionButton = document.getElementById('action-button');
@@ -593,17 +797,15 @@
             if (mode === 'encrypt') {
                 encryptTab.classList.add('active');
                 decryptTab.classList.remove('active');
-                contentLabel.textContent = '輸入內容';
-                contentInput.placeholder = '請輸入要加密的內容...';
-                passwordHint.textContent = '建議：至少12字元，包含大小寫、數字、特殊符號';
-                actionButton.innerHTML = '🔒 加密';
+                contentInput.placeholder = t.contentPlaceholder;
+                passwordHint.textContent = t.passwordHint;
+                actionButton.textContent = t.actionButtonEncrypt;
             } else {
                 encryptTab.classList.remove('active');
                 decryptTab.classList.add('active');
-                contentLabel.textContent = '密文內容';
-                contentInput.placeholder = '請貼上要解密的密文...';
-                passwordHint.textContent = '請輸入加密時使用的密碼';
-                actionButton.innerHTML = '🔓 解密';
+                contentInput.placeholder = t.contentPlaceholderDecrypt;
+                passwordHint.textContent = t.passwordHintDecrypt;
+                actionButton.textContent = t.actionButtonDecrypt;
             }
 
             // 清除輸出
@@ -616,6 +818,7 @@
         }
 
         function showOutput(content, type = 'success') {
+            const t = translations[currentLang];
             const outputSection = document.getElementById('output-section');
             const outputDiv = document.getElementById('output');
             const outputLabel = document.getElementById('output-label');
@@ -625,11 +828,11 @@
             if (type === 'success') {
                 outputDiv.textContent = content;
                 outputDiv.className = 'output-area success';
-                outputLabel.textContent = currentMode === 'encrypt' ? '加密結果' : '解密結果';
+                outputLabel.textContent = currentMode === 'encrypt' ? t.outputLabelEncrypt : t.outputLabelDecrypt;
             } else {
                 outputDiv.textContent = '❌ ' + content;
                 outputDiv.className = 'output-area error';
-                outputLabel.textContent = '錯誤';
+                outputLabel.textContent = t.outputLabelError;
             }
 
             // 平滑滾動到結果
@@ -677,15 +880,16 @@
         // 密碼顯示/隱藏切換
         // ============================================
         function togglePassword() {
+            const t = translations[currentLang];
             const input = document.getElementById('password-input');
             const button = input.nextElementSibling;
 
             if (input.type === 'password') {
                 input.type = 'text';
-                button.textContent = '隱藏';
+                button.textContent = t.togglePasswordHide;
             } else {
                 input.type = 'password';
-                button.textContent = '顯示';
+                button.textContent = t.togglePasswordShow;
             }
         }
 
@@ -704,6 +908,7 @@
         // 核心加密函數
         // ============================================
         async function encryptData() {
+            const t = translations[currentLang];
             const content = document.getElementById('content-input').value;
             const password = document.getElementById('password-input').value;
             const loading = document.getElementById('loading');
@@ -711,23 +916,23 @@
 
             // 驗證輸入
             if (!content) {
-                showOutput('請輸入要加密的內容', 'error');
+                showOutput(t.errorNoContent, 'error');
                 return;
             }
 
             if (!password) {
-                showOutput('請輸入密碼', 'error');
+                showOutput(t.errorNoPassword, 'error');
                 return;
             }
 
             if (password.length < 8) {
-                showOutput('密碼長度至少需要 8 個字元，建議使用 16 字元以上的強密碼', 'error');
+                showOutput(t.errorPasswordTooShort, 'error');
                 return;
             }
 
             try {
                 loading.classList.add('active');
-                loadingText.textContent = '加密處理中，請稍候...';
+                loadingText.textContent = t.loadingTextEncrypt;
                 hideOutput();
 
                 // 延遲執行以顯示 loading 動畫
@@ -800,7 +1005,7 @@
 
             } catch (error) {
                 console.error('加密錯誤:', error);
-                showOutput('加密過程發生錯誤，請檢查您的輸入', 'error');
+                showOutput(t.errorEncryptionFailed, 'error');
             } finally {
                 loading.classList.remove('active');
             }
@@ -810,6 +1015,7 @@
         // 核心解密函數
         // ============================================
         async function decryptData() {
+            const t = translations[currentLang];
             const content = document.getElementById('content-input').value.trim();
             const password = document.getElementById('password-input').value;
             const loading = document.getElementById('loading');
@@ -817,18 +1023,18 @@
 
             // 驗證輸入
             if (!content) {
-                showOutput('請輸入要解密的密文', 'error');
+                showOutput(t.errorNoCiphertext, 'error');
                 return;
             }
 
             if (!password) {
-                showOutput('請輸入密碼', 'error');
+                showOutput(t.errorNoPassword, 'error');
                 return;
             }
 
             try {
                 loading.classList.add('active');
-                loadingText.textContent = '解密處理中，請稍候...';
+                loadingText.textContent = t.loadingTextDecrypt;
                 hideOutput();
 
                 // 延遲執行以顯示 loading 動畫
@@ -839,18 +1045,18 @@
                 try {
                     encryptedData = new Uint8Array(base64ToArrayBuffer(content));
                 } catch (e) {
-                    throw new Error('無效的密文格式');
+                    throw new Error(t.errorInvalidFormat);
                 }
 
                 // 2. 檢查版本和最小長度
                 const minLength = 1 + CONFIG.SALT_SIZE + CONFIG.IV_SIZE + 16; // 16 = 最小 GCM tag
                 if (encryptedData.length < minLength) {
-                    throw new Error('密文長度不正確');
+                    throw new Error(t.errorInvalidCiphertext);
                 }
 
                 const version = encryptedData[0];
                 if (version !== CONFIG.VERSION) {
-                    throw new Error('不支援的加密版本');
+                    throw new Error(t.errorInvalidCiphertext);
                 }
 
                 // 3. 提取 Salt, IV, Ciphertext
@@ -916,9 +1122,9 @@
 
                 // 不透露具體錯誤細節，提升安全性
                 if (error.name === 'OperationError' || error.message.includes('decrypt')) {
-                    showOutput('解密失敗：密碼錯誤或密文已損壞', 'error');
+                    showOutput(t.errorDecryptionFailed, 'error');
                 } else {
-                    showOutput('解密失敗：' + error.message, 'error');
+                    showOutput(error.message || t.errorInvalidCiphertext, 'error');
                 }
             } finally {
                 loading.classList.remove('active');
@@ -936,11 +1142,12 @@
         }
 
         async function copyToClipboard() {
+            const t = translations[currentLang];
             const output = document.getElementById('output');
             const text = output.textContent;
 
-            if (!text || text.includes('將顯示在這裡') || text.includes('處理中') || text.startsWith('❌')) {
-                alert('沒有可複製的內容');
+            if (!text || text.includes(t.outputEmpty) || text.includes(t.loadingText) || text.startsWith('❌')) {
+                alert(t.noCopyContent);
                 return;
             }
 
@@ -950,7 +1157,7 @@
                 // 顯示複製成功提示
                 const button = event.target;
                 const originalText = button.textContent;
-                button.textContent = '✓ 已複製';
+                button.textContent = t.copySuccess;
                 button.style.background = '#45a049';
 
                 setTimeout(() => {
@@ -967,7 +1174,7 @@
                 textarea.select();
                 document.execCommand('copy');
                 document.body.removeChild(textarea);
-                alert('已複製到剪貼簿');
+                alert(t.copyFallback);
             }
         }
 
@@ -994,6 +1201,11 @@
         // ============================================
         // 初始化
         // ============================================
+        // 初始化語言
+        document.addEventListener('DOMContentLoaded', function() {
+            switchLanguage(currentLang);
+        });
+
         console.log('🔐 高安全性加解密工具已載入');
         console.log('版本:', CONFIG.VERSION);
         console.log('加密演算法: AES-GCM-256');
